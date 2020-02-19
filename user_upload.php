@@ -1,7 +1,12 @@
 <?php
 
 // Please run `composer dump-autoload -o` if directory 'vendor/' not present
-include "vendor/autoload.php";
+require "vendor/autoload.php";
+
+use CatalystTask\Connection as Connection;
+use CatalystTask\CreateTable as CreateTable;
+use CatalystTask\InitializeEmptyTable as InitializeEmptyTable;
+
 
 $getopts = new Fostam\GetOpts\Handler();
 
@@ -33,9 +38,9 @@ $results = $getopts->get();
 
 
 
-/* testing the command line args */
+/* testing the command line args
 
-//var_dump($results);
+
 
 if ($results["inputFile"]) {
     echo "input file path is: " . $results["inputFile"] . "\n";
@@ -65,4 +70,20 @@ if ($results["password"]) {
 
 if ($results["host"]) {
     echo "postgres username is: " . $results["host"] . "\n";
+}
+
+*/
+
+//var_dump($results);
+
+if ($results["create_table"]) {
+
+    try {
+        $tableCreator = new InitializeEmptyTable();
+        echo "Table `users` was created ! " . "\n";
+
+    } catch (\Exception $e) {
+        echo $e->getMessage() . "\n";
+    }
+
 }
