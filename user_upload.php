@@ -71,13 +71,22 @@ if ($results["password"]) {
 if ($results["host"]) {
     echo "postgres username is: " . $results["host"] . "\n";
 }
-
 */
 
 //var_dump($results);
 
+/* this stub assumes that the database `testdb` is created, and input user has access to `testdb */
+/*  info for troubleshooting
+ * $ psql
+ * # create db
+ * CREATE DATABASE testdb;
+ *
+ * # grant privileges to `tester`
+ * GRANT ALL PRIVILEGES ON DATABASE "testdb" to tester;
+ */
+/* TODO pass the user, password, host to the connect db fn */
+/* TODO - exception handling when user does not have privileges */
 if ($results["create_table"]) {
-
     try {
         $tableCreator = new InitializeEmptyTable();
         echo "Table `users` was created ! " . "\n";
@@ -85,5 +94,4 @@ if ($results["create_table"]) {
     } catch (\Exception $e) {
         echo $e->getMessage() . "\n";
     }
-
 }
