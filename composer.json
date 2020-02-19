@@ -1,0 +1,5 @@
+{
+    "require": {
+        "fostam/getopts": "^1.1"
+    }
+}
