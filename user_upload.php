@@ -5,6 +5,7 @@ require "vendor/autoload.php";
 
 use CatalystTask\InitializeEmptyTable as InitializeEmptyTable;
 use CatalystTask\Utilities as Utilities;
+use CatalystTask\InsertIntoTable as InsertIntoTable;
 
 $getopts = new Fostam\GetOpts\Handler();
 
@@ -35,8 +36,6 @@ $getopts->parse();
 $results = $getopts->get();
 
 
-
-
 $dryRunEnabled = False;
 if ($results["dry_run"] == 1) {
     $dryRunEnabled = True;
@@ -44,7 +43,6 @@ if ($results["dry_run"] == 1) {
 
 // just doing a dry run
 if ($dryRunEnabled && $results["inputFile"] != "") {
-//    echo "Dry run  enabled \n";
 
      $util = new Utilities();
 
@@ -60,29 +58,53 @@ if ($dryRunEnabled && $results["inputFile"] != "") {
      }  catch(\Exception $e) {
         echo $e->getMessage() . "\n";
      }
+} elseif ($results["user"] != ""
+            && $results["password"] != ""
+            && $results["host"] != ""
+            && $results["inputFile"] != "") {
+        // user, password, host and input file specified
+
+        $util = new Utilities();
+
+        try {
+            $csv = $util->readCSV($results["inputFile"]);
+
+            $rowInserter = new InsertIntoTable($results["user"], $results["password"], $results["host"]);
+            $rowInserter->insertValidRows($csv);
+
+            if($rowInserter) {
+                echo "Rows were successfully inserted. \n";
+            }
+
+        }  catch(\Exception $e) {
+            echo $e->getMessage() . "\n";
+        }
+} elseif($results["inputFile"] != "" && ($results["password"] == ""
+    || $results["host"] == ""
+    || $results["inputFile"] == "")) {
+    echo "Not all parameters were entered correctly. Please run the script with --help \n";
+
 } else {
     if ($results["inputFile"] == "") {
         echo "No file was specified. Please run the script with --help \n";
     }
 }
 
-/* testing the command line args
-
-
-
 
 // TODO need to implement logic such that if either one is missing, then print message
-if ($results["user"]) {
-    echo "postgres username is: " . $results["user"] . "\n";
-}
+//if ($results["user"]) {
+//    echo "postgres username is: " . $results["user"] . "\n";
+//}
+//
+//if ($results["password"]) {
+//    echo "postgres password is: " . $results["password"] . "\n";
+//}
+//
+//if ($results["host"]) {
+//    echo "postgres host is: " . $results["host"] . "\n";
+//}
 
-if ($results["password"]) {
-    echo "postgres password is: " . $results["password"] . "\n";
-}
-
-if ($results["host"]) {
-    echo "postgres username is: " . $results["host"] . "\n";
-}
+/* testing the command line args
 */
 
 //var_dump($results);
@@ -108,3 +130,5 @@ if ($results["create_table"]) {
     }
 }
 */
+
+

@@ -12,13 +12,17 @@ class Connection {
      * @var type 
      */
     private static $conn;
- 
+
+
     /**
      * Connect to the database and return an instance of \PDO object
+     * @param $user
+     * @param $password
+     * @param $host
      * @return \PDO
      * @throws \Exception
      */
-    public function connect() {
+    public function connect($user, $password, $host) {
  
         // read parameters in the ini configuration file
         $params = parse_ini_file('database.ini');
@@ -26,12 +30,20 @@ class Connection {
             throw new \Exception("Error reading database configuration file");
         }
         // connect to the postgresql database
-        $conStr = sprintf("pgsql:host=%s;port=%d;dbname=%s;user=%s;password=%s", 
-                $params['host'], 
-                $params['port'], 
-                $params['database'], 
-                $params['user'], 
-                $params['password']);
+//        $conStr = sprintf("pgsql:host=%s;port=%d;dbname=%s;user=%s;password=%s",
+//                $params['host'],
+//                $params['port'],
+//                $params['database'],
+//                $params['user'],
+//                $params['password']);
+
+        // establish connection to postgres DB using provided host, user, password args
+        $conStr = sprintf("pgsql:host=%s;port=%d;dbname=%s;user=%s;password=%s",
+            $host,
+            $params['port'],
+            $params['database'],
+            $user,
+            $password);
  
         $pdo = new \PDO($conStr);
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
