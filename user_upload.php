@@ -3,10 +3,8 @@
 // Please run `composer dump-autoload -o` if directory 'vendor/' not present
 require "vendor/autoload.php";
 
-use CatalystTask\Connection as Connection;
-use CatalystTask\CreateTable as CreateTable;
 use CatalystTask\InitializeEmptyTable as InitializeEmptyTable;
-
+use CatalystTask\Utilities as Utilities;
 
 $getopts = new Fostam\GetOpts\Handler();
 
@@ -38,25 +36,39 @@ $results = $getopts->get();
 
 
 
-/* testing the command line args
-
-
-
-if ($results["inputFile"]) {
-    echo "input file path is: " . $results["inputFile"] . "\n";
-}
-
 
 $dryRunEnabled = False;
 if ($results["dry_run"] == 1) {
     $dryRunEnabled = True;
 }
 
-if (!$dryRunEnabled) {
-    echo "Dry run not enabled \n";
+// just doing a dry run
+if ($dryRunEnabled && $results["inputFile"] != "") {
+//    echo "Dry run  enabled \n";
+
+     $util = new Utilities();
+
+     try {
+         $csv = $util->readCSV($results["inputFile"]);
+
+         $validator = $util->validator($csv);
+
+         if($validator) {
+             echo "Input file seems to be OK. \n";
+         }
+
+     }  catch(\Exception $e) {
+        echo $e->getMessage() . "\n";
+     }
 } else {
-    echo "Dry run  enabled \n";
+    if ($results["inputFile"] == "") {
+        echo "No file was specified. Please run the script with --help \n";
+    }
 }
+
+/* testing the command line args
+
+
 
 
 // TODO need to implement logic such that if either one is missing, then print message
@@ -84,8 +96,8 @@ if ($results["host"]) {
  * # grant privileges to `tester`
  * GRANT ALL PRIVILEGES ON DATABASE "testdb" to tester;
  */
-/* TODO pass the user, password, host to the connect db fn */
-/* TODO - exception handling when user does not have privileges */
+/* TODO pass the user, password, host to the connect db fn  */
+/* TODO - exception handling when user does not have privileges
 if ($results["create_table"]) {
     try {
         $tableCreator = new InitializeEmptyTable();
@@ -95,3 +107,4 @@ if ($results["create_table"]) {
         echo $e->getMessage() . "\n";
     }
 }
+*/
