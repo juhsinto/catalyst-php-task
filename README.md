@@ -39,7 +39,7 @@ Usage: user_upload.php [-c|--create_table] [-d|--dry_run] [-h|--help] [INPUT-FIL
   -h, --help  
 The first 3 (-c, -d, -h) are optional, but the others are mandatory.
 
-php user_upload.php "users_valid.csv" --dry_run 
+`php user_upload.php "users_valid.csv" --dry_run`
 
 This command will do a dry run (validation checks) on the given csv file.
 The argument specified should be a relative path. 
