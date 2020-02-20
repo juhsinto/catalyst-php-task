@@ -47,10 +47,9 @@ if ($results["dry_run"] == 1) {
      * # create db
      * CREATE DATABASE testdb;
      *
-     * # grant privileges to `tester` (ASSUMING `tester` is the user who will be using the script)
+     * # grant privileges to `tester` (ASSUMING `tester` has insert privilege for this script)
      * GRANT ALL PRIVILEGES ON DATABASE "testdb" to tester;
      */
-    /* TODO - exception handling when user does not have privileges */
 if ($results["create_table"]) {
     // not all params entered correctly
     if($results["user"] == ""
@@ -101,8 +100,15 @@ elseif ($dryRunEnabled && $results["inputFile"] != "") {
         try {
             $csv = $util->readCSV($results["inputFile"]);
 
-            $rowInserter = new InsertIntoTable($results["user"], $results["password"], $results["host"]);
-            $rowInserter->insertValidRows($csv);
+            $validator = $util->validator($csv);
+
+            if($validator) {
+                echo "Input file seems to be OK. \n";
+                $rowInserter = new InsertIntoTable($results["user"], $results["password"], $results["host"]);
+                $rowInserter->insertValidRows($csv);
+            } else {
+                echo "There was a problem with validity of the data. \n";
+            }
 
         }  catch(\Exception $e) {
             echo $e->getMessage() . "\n";

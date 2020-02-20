@@ -26,7 +26,6 @@ class InsertIntoTable
      * @param string $table Table to search for.
      * @return bool TRUE if table exists, FALSE if no table found.
      */
-    // TODO FIX THIS!
     function tableExists($pdo, $table) {
 
         // Try a select statement against the table
