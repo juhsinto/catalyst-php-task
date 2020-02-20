@@ -72,10 +72,6 @@ if ($dryRunEnabled && $results["inputFile"] != "") {
             $rowInserter = new InsertIntoTable($results["user"], $results["password"], $results["host"]);
             $rowInserter->insertValidRows($csv);
 
-            if($rowInserter) {
-                echo "Rows were successfully inserted. \n";
-            }
-
         }  catch(\Exception $e) {
             echo $e->getMessage() . "\n";
         }

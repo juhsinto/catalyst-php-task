@@ -23,6 +23,7 @@ class InitializeEmptyTable
             // connect to the PostgresSQL database
             $pdo = Connection::get()->connect();
 
+
             // create an instance of the table creator
             $tableCreator = new CreateTable($pdo);
 

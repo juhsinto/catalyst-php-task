@@ -15,6 +15,7 @@ use CatalystTask\Utilities as Utilities;
 class InsertIntoTable
 {
 
+    private $pdo;
     private $dataStore;
 
     /**
@@ -31,6 +32,7 @@ class InsertIntoTable
         // Try a select statement against the table
         // Run it in try/catch in case PDO is in ERRMODE_EXCEPTION.
         try {
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);
             $result = $pdo->query("SELECT 1 FROM $table LIMIT 1");
         } catch (Exception $e) {
             // We got an exception == table not found
@@ -53,10 +55,13 @@ class InsertIntoTable
             // connect to the PostgresSQL database
             $pdo = Connection::get()->connect($user, $password, $host);
 
+            $this->pdo = $pdo;
+
             // create an instance of the table creator
             $pdo_dataStore = new DataStore($pdo);
 
             $this->dataStore  = $pdo_dataStore;
+
 
         } catch (\PDOException $e) {
             echo "Could not connect to database: " . $e->getMessage() . "\n";
@@ -87,7 +92,7 @@ class InsertIntoTable
         try {
 
             // check if users table exists!
-//            if($this->tableExists($this->dataStore, "users")) {
+            if($this->tableExists($this->pdo, "users")) {
                 $row = 1;
                 foreach ( $rows as $columns ) {
 
@@ -109,12 +114,15 @@ class InsertIntoTable
 
                     $this->insertRowIntoUsers($name, $surname, $email);
 
-//                }
-//            } else {
-//
-//                echo "Table does not exist! Please re-run the script with the --create-table flag!. \n";
-//                echo " Please run the script with --help for more information \n";
-//
+                }
+
+                echo "Rows were successfully inserted. \n";
+
+            } else {
+
+                echo "Table does not exist! Please re-run the script with the --create-table flag!. \n";
+                echo "Please run the script with --help for more information \n";
+                return false;
             }
            
         } catch (\PDOException $e) {
