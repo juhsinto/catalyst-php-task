@@ -13,15 +13,14 @@ use CatalystTask\CreateTable as CreateTable;
 
 class InitializeEmptyTable
 {
-    public function __construct() {
+    public function __construct($user, $password, $host) {
 
         try {
-            Connection::get()->connect();
-
+            Connection::get()->connect($user, $password, $host);
 //            echo 'A connection to the PostgresSQL database sever has been established successfully. \n';
 
             // connect to the PostgresSQL database
-            $pdo = Connection::get()->connect();
+            $pdo = Connection::get()->connect($user, $password, $host);
 
 
             // create an instance of the table creator

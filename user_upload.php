@@ -41,8 +41,40 @@ if ($results["dry_run"] == 1) {
     $dryRunEnabled = True;
 }
 
+    /* this stub assumes that the database `testdb` is created, and input user has access to `testdb */
+    /* If not ; then follow the below steps
+     * $ psql
+     * # create db
+     * CREATE DATABASE testdb;
+     *
+     * # grant privileges to `tester` (ASSUMING `tester` is the user who will be using the script)
+     * GRANT ALL PRIVILEGES ON DATABASE "testdb" to tester;
+     */
+    /* TODO - exception handling when user does not have privileges */
+if ($results["create_table"]) {
+    // not all params entered correctly
+    if($results["user"] == ""
+        || $results["password"] == ""
+        || $results["host"] == "") {
+        echo "Not all parameters were entered correctly. Please run the script with --help \n";
+
+    }
+    // user, password and host is specified
+    elseif($results["password"] != ""
+        && $results["host"] != ""
+        && $results["user"] != "") {
+
+        try {
+            $tableCreator = new InitializeEmptyTable($results["user"], $results["password"], $results["host"]);
+            echo "Table `users` was created ! " . "\n";
+
+        } catch (\Exception $e) {
+            echo $e->getMessage() . "\n";
+        }
+    }
+}
 // just doing a dry run
-if ($dryRunEnabled && $results["inputFile"] != "") {
+elseif ($dryRunEnabled && $results["inputFile"] != "") {
 
      $util = new Utilities();
 
@@ -81,50 +113,7 @@ if ($dryRunEnabled && $results["inputFile"] != "") {
     echo "Not all parameters were entered correctly. Please run the script with --help \n";
 
 } else {
-    if ($results["inputFile"] == "") {
+    if ($results["create_table"] == "" && $results["inputFile"] == "") {
         echo "No file was specified. Please run the script with --help \n";
     }
 }
-
-
-// TODO need to implement logic such that if either one is missing, then print message
-//if ($results["user"]) {
-//    echo "postgres username is: " . $results["user"] . "\n";
-//}
-//
-//if ($results["password"]) {
-//    echo "postgres password is: " . $results["password"] . "\n";
-//}
-//
-//if ($results["host"]) {
-//    echo "postgres host is: " . $results["host"] . "\n";
-//}
-
-/* testing the command line args
-*/
-
-//var_dump($results);
-
-/* this stub assumes that the database `testdb` is created, and input user has access to `testdb */
-/*  info for troubleshooting
- * $ psql
- * # create db
- * CREATE DATABASE testdb;
- *
- * # grant privileges to `tester`
- * GRANT ALL PRIVILEGES ON DATABASE "testdb" to tester;
- */
-/* TODO pass the user, password, host to the connect db fn  */
-/* TODO - exception handling when user does not have privileges
-if ($results["create_table"]) {
-    try {
-        $tableCreator = new InitializeEmptyTable();
-        echo "Table `users` was created ! " . "\n";
-
-    } catch (\Exception $e) {
-        echo $e->getMessage() . "\n";
-    }
-}
-*/
-
-
